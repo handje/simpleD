@@ -1,29 +1,35 @@
-import { Link } from "react-router-dom";
+import { Link,Navigate } from "react-router-dom";
 import axios from "axios";
 import { Form, Input, Button, Checkbox } from "antd";
 import "antd/dist/antd.min.css";
 
-function Login({ user, inputID, inputPWD, setInputID, setInputPWD, setUser }) {
+import './Login.css';
+
+function Login({ user, inputID, inputPWD, setInputID, setInputPWD, setUser,history }) {
+  const goToMain = () => {
+    console.log("go main");
+    return <Navigate to="/login" />
+  }
+
   function handleInputID(event) {
     setInputID(event.target.value);
   }
+  
 
   function handleInputPWD(event) {
     setInputPWD(event.target.value);
   }
 
   const onFinish = (values) => {
-    console.log("Success:", values);
     //event.preventDefault();
     // if (!emailCheck(inputID)) {
     //   window.alert("이메일 형식이 맞지 않습니다.");
     //   return;
     // }
     const LoginUser = { user_id: inputID, user_password: inputPWD };
-    setUser(LoginUser);
     setInputID("");
     setInputPWD("");
-    axiosPost(LoginUser);
+    axiosPost(LoginUser)
   };
 
   const onFinishFailed = (errorInfo) => {
@@ -42,6 +48,14 @@ function Login({ user, inputID, inputPWD, setInputID, setInputPWD, setUser }) {
       })
       .then((response) => {
         console.dir(response);
+        if(response.data.errorCode===0){
+          console.log("ok")
+          setUser(LoginUser);
+          goToMain();
+        }else{
+          console.log("loginError")
+          alert("loginError")
+        }
       })
       .catch((error) => {
         console.log("error");
@@ -51,14 +65,14 @@ function Login({ user, inputID, inputPWD, setInputID, setInputPWD, setUser }) {
 
   return (
     <div className="Login">
-      <h1>Login</h1>
+      <h1>Simda</h1>
       <Form
         name="basic"
         labelCol={{
-          span: 8,
+          span: 10,
         }}
         wrapperCol={{
-          span: 8,
+          span: 10,
         }}
         initialValues={{
           remember: true,
@@ -119,9 +133,7 @@ function Login({ user, inputID, inputPWD, setInputID, setInputPWD, setUser }) {
             Submit
           </Button>
           <Link to="/register">
-            <Button type="primary" htmlType="submit">
-              Register
-            </Button>
+          Register
           </Link>
         </Form.Item>
       </Form>
